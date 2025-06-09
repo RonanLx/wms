@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.IncreaseDecreaseMapper">
+
+    <select id="pageDetail" resultType="com.itheima.wms.model.vo.biz.IncreaseDecreaseDetailVO">
+        select wid.*,
+        ww.name as warehouseName,
+        wa.name as areaName,
+        wl.name as locationName,
+        wo.name as ownerName,
+        wg.name as goodsName
+        from wms_increase_decrease wid
+        left join wms_stock ws on wid.stock_id = ws.id
+        left join wms_warehouse ww on ws.warehouse_id = ww.id
+        left join wms_area wa on ws.area_id = wa.id
+        left join wms_location wl on ws.location_id = wl.id
+        left join wms_owner wo on ws.owner_id = wo.id
+        left join wms_goods wg on ws.goods_id = wg.id
+        <where>
+            <if test="taskId != null">
+                and wid.task_id = #{taskId}
+            </if>
+            <if test="taskCode != null">
+                and wid.task_code = #{taskCode}
+            </if>
+            <if test="code != null">
+                and wid.code like concat('%',#{code},'%')
+            </if>
+            <if test="status != null">
+                and wid.status = #{goodsName}
+            </if>
+            <if test="ownerName != null and ownerName != ''">
+                and wo.name like concat('%',#{ownerName},'%')
+            </if>
+        </where>
+        order by wid.update_time desc
+    </select>
+
+    <select id="sum" resultType="com.itheima.wms.model.vo.biz.IncreaseDecreaseSumVO">
+        select IFNULL(sum(wid.id_num),0) AS total,IFNULL(sum(wid.id_money),0) AS money
+        from wms_increase_decrease wid
+        left join wms_stock ws on wid.stock_id = ws.id
+        left join wms_warehouse ww on ws.warehouse_id = ww.id
+        left join wms_area wa on ws.area_id = wa.id
+        left join wms_location wl on ws.location_id = wl.id
+        left join wms_owner wo on ws.owner_id = wo.id
+        left join wms_goods wg on ws.goods_id = wg.id
+        <where>
+            <if test="taskId != null">
+                and wid.task_id = #{taskId}
+            </if>
+            <if test="taskCode != null">
+                and wid.task_code = #{taskCode}
+            </if>
+            <if test="code != null">
+                and wid.code like concat('%',#{code},'%')
+            </if>
+            <if test="status != null">
+                and wid.status = #{goodsName}
+            </if>
+            <if test="ownerName != null and ownerName != ''">
+                and wo.name like concat('%',#{ownerName},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="save">
+        insert into wms_increase_decrease (code, stock_id, id_num, id_money, id_source, task_id, task_code, remark,
+                                           create_name, update_name, create_time, update_time)
+        values (#{code}, #{stockId}, #{idNum}, #{idMoney}, #{idSource}, #{taskId},
+                #{taskCode}, #{remark}, #{createName}, #{updateName}, #{createTime}, #{updateTime})
+    </insert>
+
+</mapper>

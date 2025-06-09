@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.base.GoodsMapper">
+
+    <select id="pageDetail" resultType="com.itheima.wms.model.vo.base.GoodsDetailVO">
+        select wg.*,
+        wa.name areaName,
+        wo.name ownerName,
+        wo.code ownerCode,
+        wgt.name goodsTypeName
+        from wms_goods wg
+        left join wms_owner wo on wg.owner_id = wo.id
+        left join wms_goods_type wgt on wg.goods_type_id = wgt.id
+        left join wms_area wa on wg.area_id = wa.id
+        <where>
+            <if test="ownerId != null">and wo.id = #{ownerId}</if>
+            <if test="ownerName != null">and wo.name like concat('%',#{ownerName},'%')</if>
+            <if test="name != null">and wg.name like concat('%',#{name},'%')</if>
+            <if test="code != null">and wg.code like concat('%',#{code},'%')</if>
+        </where>
+        order by wg.update_time desc
+    </select>
+
+    <select id="page" resultType="com.itheima.wms.model.entity.base.Goods">
+        select wg.*
+        from wms_goods wg
+        <where>
+            <if test="name != null">and wg.name like concat('%',#{name},'%')</if>
+            <if test="code != null">and wg.code like concat('%',#{code},'%')</if>
+        </where>
+        order by wg.update_time desc
+    </select>
+
+    <insert id="save">
+        insert into wms_goods(goods_type_id, code, name, bar_code, owner_id, inspection_type, temperature_type,
+                              bearing_type, volume, warehouse_id, area_id, price, unit, guarantee_day, status,
+                              remark, create_name, update_name, create_time, update_time)
+        values (#{goodsTypeId}, #{code}, #{name}, #{barCode}, #{ownerId},
+                #{inspectionType}, #{temperatureType}, #{bearingType}, #{volume}, #{warehouseId},
+                #{areaId}, #{price}, #{unit}, #{guaranteeDay}, #{status},
+                #{remark}, #{createName}, #{updateName}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="updateById">
+        update wms_goods
+        <set>
+            <if test="goodsTypeId != null">goods_type_id = #{goodsTypeId},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="barCode != null">bar_code = #{barCode},</if>
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="inspectionType != null">inspection_type = #{inspectionType},</if>
+            <if test="temperatureType != null">temperature_type = #{temperatureType},</if>
+            <if test="bearingType != null">bearing_type = #{bearingType},</if>
+            <if test="volume != null">volume = #{volume},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="areaId != null">area_id = #{areaId},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="guaranteeDay != null">guarantee_day = #{guaranteeDay},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateName != null">update_name = #{updateName},</if>
+            <if test="updateTime != null">update_time = #{updateTime}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

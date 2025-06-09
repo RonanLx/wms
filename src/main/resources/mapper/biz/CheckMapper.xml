@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.CheckMapper">
+    <select id="selectCheckDetail" resultType="com.itheima.wms.model.vo.biz.CheckDetailVO">
+        select wc.*,wo.name as ownerName,ww.name as warehouseName,wa.name as areaName from wms_check wc
+        left join wms_owner wo on wc.owner_id = wo.id
+        left join wms_warehouse ww on wc.warehouse_id = ww.id
+        left join wms_area wa on wc.area_id = wa.id
+        <where>
+            1 = 1
+            <if test="params.warehouseName != null">
+                and ww.name like concat('%',#{params.warehouseName},'%')
+            </if>
+            <if test="params.areaName != null">
+                and wa.name like concat('%',#{params.areaName},'%')
+            </if>
+            <if test="params.ownerName != null">
+                and wo.name like concat('%',#{params.ownerName},'%')
+            </if>
+            <if test="params.warehouseId != null">
+                and wc.warehouse_id = #{params.warehouseId}
+            </if>
+            <if test="params.areaId != null">
+                and wc.area_id = #{params.areaId}
+            </if>
+            <if test="params.ownerId != null">
+                and wc.owner_id = #{params.ownerId}
+            </if>
+            <if test="params.type != null">
+                and wc.type = #{params.type}
+            </if>
+            <if test="params.status != null">
+                and wc.status = #{params.status}
+            </if>
+            <if test="params.reason != null">
+                and wc.reason = #{params.reason}
+            </if>
+            <if test="params.dimension != null">
+                and wc.dimension = #{params.dimension}
+            </if>
+            <if test="params.code != null">
+                and wc.code like concat('%',#{params.code},'%')
+            </if>
+        </where>
+        order by wc.create_time desc
+    </select>
+
+    <insert id="save" >
+        insert into wms_check(code, owner_id, plan_check_time, reason, dimension, type, warehouse_id, area_id, status, remark, create_name, update_name, create_time, update_time)
+        values (#{code}, #{ownerId}, #{planCheckTime}, #{reason}, #{dimension}, #{type}, #{warehouseId}, #{areaId}, #{status}, #{remark}, #{createName}, #{updateName}, #{createTime}, #{updateTime})
+    </insert>
+</mapper>

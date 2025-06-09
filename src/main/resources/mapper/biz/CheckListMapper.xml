@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.CheckListMapper">
+
+    <select id="selectCheckListDetail" resultType="com.itheima.wms.model.vo.biz.CheckListDetailVO">
+        select wcl.*,
+        ww.name as warehouseName,
+        ww.code as warehouseCode,
+        wa.name as areaName,
+        wa.code as areaCode,
+        wl.name as locationName,
+        wl.code as locationCode,
+        wg.name as goodsName,
+        wg.code as goodsCode,
+        wg.bar_code as goodsBarCode,
+        wo.name as ownerName,
+        wo.code as ownerCode
+        from wms_check_list wcl
+        left join wms_stock ws on wcl.stock_id = ws.id
+        left join wms_warehouse ww on ws.warehouse_id = ww.id
+        left join wms_area wa on ws.area_id = wa.id
+        left join wms_location wl on ws.location_id = wl.id
+        left join wms_goods wg on ws.goods_id = wg.id
+        left join wms_owner wo on ws.owner_id = wo.id
+        <where>
+            1 = 1
+            <if test="params.masterId != null">
+                and wcl.master_id = #{params.masterId}
+            </if>
+            <if test="params.status != null">
+                and wcl.status = #{params.status}
+            </if>
+            <if test="params.warehouseName != null">
+                and ww.name like concat('%',#{params.warehouseName},'%')
+            </if>
+            <if test="params.warehouseCode != null">
+                and ww.code like concat('%',#{params.warehouseCode},'%')
+            </if>
+            <if test="params.areaName != null">
+                and wa.name like concat('%',#{params.areaName},'%')
+            </if>
+            <if test="params.areaCode != null">
+                and wa.code like concat('%',#{params.areaCode},'%')
+            </if>
+            <if test="params.locationName != null">
+                and wl.name like concat('%',#{params.locationName},'%')
+            </if>
+            <if test="params.locationCode != null">
+                and wl.code like concat('%',#{params.locationCode},'%')
+            </if>
+            <if test="params.goodsName != null">
+                and wg.name like concat('%',#{params.goodsName},'%')
+            </if>
+            <if test="params.goodsCode != null">
+                and wg.code like concat('%',#{params.goodsCode},'%')
+            </if>
+            <if test="params.ownerName != null">
+                and wo.name like concat('%',#{params.ownerName},'%')
+            </if>
+            <if test="params.ownerCode != null">
+                and wo.code like concat('%',#{params.ownerCode},'%')
+            </if>
+        </where>
+        order by wcl.create_time desc
+    </select>
+</mapper>

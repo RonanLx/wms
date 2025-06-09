@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.base.WarehouseMapper">
+
+    <select id="page" resultType="com.itheima.wms.model.entity.base.Warehouse">
+        select *
+        from wms_warehouse
+        <where>
+            <if test="like_code != null and like_code != ''">and code like concat('%', #{like_code}, '%')</if>
+            <if test="like_name != null and like_name != ''">and name like concat('%', #{like_name}, '%')</if>
+            <if test="status != null">and status = #{status}</if>
+        </where>
+        order by update_time desc
+    </select>
+
+    <select id="save">
+        insert into wms_warehouse(code, name, type, location, province, city, area, address, surface, person_name,
+                                  phone, included_num, status, remark, create_name, update_name, create_time,
+                                  update_time)
+        values (#{code}, #{name}, #{type}, #{location}, #{province}, #{city}, #{area}, #{address}, #{surface},
+                #{personName}, #{phone}, #{includedNum}, #{status}, #{remark}, #{createName}, #{updateName},
+                #{createTime}, #{updateTime})
+    </select>
+
+    <update id="updateById">
+        update wms_warehouse
+        <set>
+            <if test="code != null">code =#{code},</if>
+            <if test="name != null">name =#{name},</if>
+            <if test="type != null">type =#{type},</if>
+            <if test="location != null">location =#{location},</if>
+            <if test="province != null">province =#{province},</if>
+            <if test="city != null">city =#{city},</if>
+            <if test="area != null">area =#{area},</if>
+            <if test="address != null">address =#{address},</if>
+            <if test="surface != null">surface =#{surface},</if>
+            <if test="personName != null">person_name =#{personName},</if>
+            <if test="phone != null">phone =#{phone},</if>
+            <if test="includedNum != null">included_num =#{includedNum},</if>
+            <if test="status != null">status =#{status},</if>
+            <if test="remark != null">remark =#{remark},</if>
+            <if test="updateName != null">update_name =#{updateName},</if>
+            <if test="updateTime != null">update_time =#{updateTime}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

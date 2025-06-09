@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.base.AreaMapper">
+
+    <resultMap id="pageDetailResultMap" type="com.itheima.wms.model.vo.base.AreaDetailVO">
+        <!-- 映射的作用是什么
+            字段跟实体类的属性对应不上的时候，可以配置映射关系
+            id  主键
+            result  普通的字段
+         -->
+        <id column="id" property="id"/>
+        <result property="name" column="name"></result>
+    </resultMap>
+
+    <select id="pageDetail" resultMap="pageDetailResultMap">
+        select wa.*,ww.name warehouseName from wms_area wa
+        left join ${tableName} ww on wa.warehouse_id = ww.id
+        <where>
+            <if test="warehouseName != null">and ww.name like concat('%',#{warehouseName},'%')</if>
+            <if test="name != null">and wa.name like concat('%',#{name},'%')</if>
+            <if test="status != null">and wa.status = #{status}</if>
+        </where>
+        order by wa.update_time desc
+    </select>
+
+    <select id="page" resultType="com.itheima.wms.model.entity.base.Area">
+        select wa.*
+        from wms_area wa
+        <where>
+            <if test="warehouseId != null">and wa.warehouse_id = #{warehouseId}</if>
+            <if test="status != null">and wa.status = #{status}</if>
+        </where>
+        order by wa.update_time desc
+    </select>
+
+    <insert id="save">
+        insert into wms_area(warehouse_id, code, name, temperature_type, bearing_type, use_type, person_name, phone,
+                             included_num, status, remark, create_name, update_name, create_time, update_time)
+        values (#{warehouseId}, #{code}, #{name}, #{temperatureType}, #{bearingType}, #{useType}, #{personName},
+                #{phone}, #{includedNum}, #{status}, #{remark},
+                #{createName}, #{updateName}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="updateById">
+        update wms_area
+        <set>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="temperatureType != null">temperature_type = #{temperatureType},</if>
+            <if test="bearingType != null">bearing_type = #{bearingType},</if>
+            <if test="useType != null">use_type = #{useType},</if>
+            <if test="personName != null">person_name = #{personName},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="includedNum != null">included_num = #{includedNum},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateName != null">update_name = #{updateName},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="areaUseStatus" resultType="java.util.HashMap">
+        select sum(IFNULL(ws.total,0)) value,
+        wa.name name
+        from wms_area wa
+        left join wms_location wl on wl.area_id = wa.id
+        left join wms_stock ws on ws.location_id = wl.id
+        <where>
+            <if test="warehouseId != null">
+                and wa.warehouse_id = #{warehouseId}
+            </if>
+        </where>
+        GROUP BY wa.name
+    </select>
+</mapper>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.LocationPlanMapper">
+
+    <insert id="save">
+        insert into wms_location_plan (warehouse_id, area_id, location_id, receipt_list_id, goods_id, num, status,
+                                       remark, create_name, update_name, create_time, update_time)
+        values (#{warehouseId}, #{areaId}, #{locationId}, #{receiptListId}, #{goodsId},
+                #{num}, #{status}, #{remark}, #{createName}, #{updateName},
+                #{createTime}, #{updateTime});
+    </insert>
+
+</mapper>

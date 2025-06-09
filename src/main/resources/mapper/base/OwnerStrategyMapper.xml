@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.base.OwnerStrategyMapper">
+    <select id="selectOwnerStrategyDetail" resultType="com.itheima.wms.model.vo.base.OwnerStrategyDetailVO">
+        select wos.*,ww.name as warehouseName,wa.name as areaName from wms_owner_strategy wos
+        left join wms_warehouse ww on wos.warehouse_id = ww.id
+        left join wms_area wa on wos.area_id = wa.id
+        <where>
+            1 = 1
+            <if test="params.ownerId != null">
+                and wos.owner_id = #{params.ownerId}
+            </if>
+        </where>
+        order by wos.create_time desc
+    </select>
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.ReceiptMapper">
+
+    <select id="pageDetail" resultType="com.itheima.wms.model.vo.biz.ReceiptDetailVO">
+        select wr.*,
+        wo.name as ownerName,
+        wo.code as ownerCode,
+        ww.name as warehouseName,
+        wa.name as areaName
+        from wms_receipt wr
+        left join wms_owner wo on wr.owner_id = wo.id
+        left join wms_warehouse ww on wr.warehouse_id = ww.id
+        left join wms_area wa on wr.area_id = wa.id
+        <where>
+            1 = 1
+            <if test="warehouseName != null">
+                and ww.name like concat('%',#{warehouseName},'%')
+            </if>
+            <if test="areaName != null">
+                and wa.name like concat('%',#{areaName},'%')
+            </if>
+            <if test="ownerName != null">
+                and wo.name like concat('%',#{ownerName},'%')
+            </if>
+            <if test="warehouseId != null">
+                and wr.warehouse_id = #{warehouseId}
+            </if>
+            <if test="areaId != null">
+                and wr.area_id = #{areaId}
+            </if>
+            <if test="ownerId != null">
+                and wr.owner_id = #{ownerId}
+            </if>
+            <if test="status != null">
+                and wr.status = #{status}
+            </if>
+            <if test="code != null">
+                and wr.code like concat('%',#{code},'%')
+            </if>
+            <if test="billCode != null">
+                and wr.bill_code like concat('%',#{billCode},'%')
+            </if>
+        </where>
+        order by wr.update_time desc
+    </select>
+
+    <select id="page" resultType="com.itheima.wms.model.vo.biz.ReceiptVO">
+
+    </select>
+
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into wms_receipt (code, bill_code, plan_arrival_time, owner_id, warehouse_id, area_id, license,
+                                 shipper_name, delivery_name, delivery_phone, plan_num, status, remark, create_name,
+                                 update_name, create_time, update_time)
+        values (#{code}, #{billCode}, #{planArrivalTime}, #{ownerId}, #{warehouseId}, #{areaId},
+                #{license}, #{shipperName}, #{deliveryName}, #{deliveryPhone}, #{planNum}, #{status},
+                #{remark}, #{createName}, #{updateName}, #{createTime}, #{updateTime});
+    </insert>
+
+    <update id="updateById">
+        update wms_receipt
+        <set>
+            <if test="code != null">code = #{code},</if>
+            <if test="billCode != null">bill_code = #{billCode},</if>
+            <if test="planArrivalTime != null">plan_arrival_time = #{planArrivalTime},</if>
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="areaId != null">area_id = #{areaId},</if>
+            <if test="license != null">license = #{license},</if>
+            <if test="shipperName != null">shipper_name = #{shipperName},</if>
+            <if test="deliveryName != null">delivery_name = #{deliveryName},</if>
+            <if test="deliveryPhone != null">delivery_phone = #{deliveryPhone},</if>
+            <if test="planNum != null">plan_num = #{planNum},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateName != null">update_name = #{updateName},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+</mapper>

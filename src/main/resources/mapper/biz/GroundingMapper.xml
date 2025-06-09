@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.GroundingMapper">
+
+    <select id="pageDetail" resultType="com.itheima.wms.model.vo.biz.GroundingDetailVO">
+        select wg.*,
+        wo.name ownerName,
+        wo.code ownerCode,
+        ww.name warehouseName,
+        wa.name areaName
+        from wms_grounding wg
+        left join wms_owner wo on wg.owner_id = wo.id
+        left join wms_warehouse ww on wg.warehouse_id = ww.id
+        left join wms_area wa on wg.area_id = wa.id
+        <where>
+            <if test="code != null">
+                and wg.code like concat('%',#{code},'%')
+            </if>
+            <if test="receiptCode != null">
+                and wg.receipt_code like concat('%',#{receiptCode},'%')
+            </if>
+            <if test="ownerName != null">
+                and wo.name like concat('%',#{ownerName},'%')
+            </if>
+        </where>
+        order by wg.update_time desc
+    </select>
+
+    <select id="sumGroupByDate" resultType="java.util.HashMap">
+        SELECT
+        DATE_FORMAT( w.create_time, '%${dimension}' ) AS date,
+        IFNULL(sum(w.grounding_num),0) AS num
+        FROM
+        wms_grounding w
+        where 1 = 1
+        <if test="warehouseId != null">
+            and w.warehouse_id = #{warehouseId}
+        </if>
+        <if test="startCreateTime != null">
+            and w.create_time >= DATE_FORMAT(#{startCreateTime}, '%Y-%m-%d %H:%i:%S' )
+        </if>
+        <if test="endCreateTime != null">
+            and w.create_time <![CDATA[ < ]]> DATE_FORMAT(#{endCreateTime}, '%Y-%m-%d %H:%i:%S' )
+        </if>
+        GROUP BY date
+        ORDER BY date ASC
+    </select>
+
+    <insert id="insert">
+        insert into wms_grounding(code, receipt_code, owner_id, warehouse_id, area_id, master_id, person_name, plan_num,
+                                  real_num, grounding_num, difference_num, completion_time, status, remark, create_name,
+                                  update_name, create_time, update_time)
+        values (#{code}, #{receiptCode}, #{ownerId}, #{warehouseId}, #{areaId},
+                #{masterId}, #{personName}, #{planNum}, #{realNum}, #{groundingNum},
+                #{differenceNum}, #{completionTime}, #{status}, #{remark}, #{createName},
+                #{updateName}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="updateById">
+        update wms_grounding
+        <set>
+            <if test="code != null">code = #{code},</if>
+            <if test="receiptCode != null">receipt_code = #{receiptCode},</if>
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="areaId != null">area_id = #{areaId},</if>
+            <if test="masterId != null">master_id = #{masterId},</if>
+            <if test="personName != null">person_name = #{personName},</if>
+            <if test="planNum != null">plan_num = #{planNum},</if>
+            <if test="realNum != null">real_num = #{realNum},</if>
+            <if test="groundingNum != null">grounding_num = #{groundingNum},</if>
+            <if test="differenceNum != null">difference_num = #{differenceNum},</if>
+            <if test="completionTime != null">completion_time = #{completionTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateName != null">update_name = #{updateName},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+</mapper>

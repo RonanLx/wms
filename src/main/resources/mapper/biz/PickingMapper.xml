@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.PickingMapper">
+
+    <select id="pageDetail" resultType="com.itheima.wms.model.vo.biz.PickingDetailVO">
+        select wp.*,wo.name as ownerName,wo.code as ownerCode,ww.name as warehouseName,wa.name as areaName from
+        wms_picking wp
+        left join wms_owner wo on wp.owner_id = wo.id
+        left join wms_warehouse ww on wp.warehouse_id = ww.id
+        left join wms_area wa on wp.area_id = wa.id
+        <where>
+            <if test="params.warehouseName != null">
+                and ww.name like concat('%',#{params.warehouseName},'%')
+            </if>
+            <if test="params.areaName != null">
+                and wa.name like concat('%',#{params.areaName},'%')
+            </if>
+            <if test="params.ownerName != null">
+                and wo.name like concat('%',#{params.ownerName},'%')
+            </if>
+            <if test="params.warehouseId != null">
+                and wp.warehouse_id = #{params.warehouseId}
+            </if>
+            <if test="params.areaId != null">
+                and wp.area_id = #{params.areaId}
+            </if>
+            <if test="params.ownerId != null">
+                and wp.owner_id = #{params.ownerId}
+            </if>
+            <if test="params.status != null">
+                and wp.status = #{params.status}
+            </if>
+            <if test="params.code != null">
+                and wp.code like concat('%',#{params.code},'%')
+            </if>
+        </where>
+        order by wp.create_time desc
+    </select>
+
+    <select id="sumGroupByDate" resultType="java.util.HashMap">
+        SELECT
+        DATE_FORMAT( w.create_time, '%${params.dimension}' ) AS date,
+        IFNULL(sum(w.picking_num),0) AS num
+        FROM
+        wms_picking w
+        where 1 = 1
+        <if test="params.warehouseId != null">
+            and w.warehouse_id = #{params.warehouseId}
+        </if>
+        <if test="params.startCreateTime != null">
+            and w.create_time >= DATE_FORMAT(#{params.startCreateTime}, '%Y-%m-%d %H:%i:%S' )
+        </if>
+        <if test="params.endCreateTime != null">
+            and w.create_time <![CDATA[ < ]]> DATE_FORMAT(#{params.endCreateTime}, '%Y-%m-%d %H:%i:%S' )
+        </if>
+        GROUP BY date
+        ORDER BY date ASC
+    </select>
+
+    <insert id="save">
+        insert into wms_picking (master_id, code, outbound_code, owner_id, warehouse_id, area_id, picking_num,
+                                 person_name, real_num, difference_num, completion_time, status, remark, create_name,
+                                 update_name, create_time, update_time)
+        values (#{masterId}, #{code}, #{outboundCode}, #{ownerId}, #{warehouseId},
+                #{areaId}, #{pickingNum}, #{personName}, #{realNum}, #{differenceNum},
+                #{completionTime}, #{status}, #{remark}, #{createName}, #{updateName},
+                #{createTime}, #{updateTime});
+    </insert>
+
+    <update id="updateById">
+        update wms_picking
+        <set>
+            <if test="masterId != null">master_id = #{masterId},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="outboundCode != null">outbound_code = #{outboundCode},</if>
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="areaId != null">area_id = #{areaId},</if>
+            <if test="pickingNum != null">picking_num = #{pickingNum},</if>
+            <if test="personName != null">person_name = #{personName},</if>
+            <if test="realNum != null">real_num = #{realNum},</if>
+            <if test="differenceNum != null">difference_num = #{differenceNum},</if>
+            <if test="completionTime != null">completion_time = #{completionTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateName != null">update_name = #{updateName},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+</mapper>

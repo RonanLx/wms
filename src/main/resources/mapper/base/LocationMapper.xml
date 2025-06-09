@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.base.LocationMapper">
+
+    <select id="pageDetail" resultType="com.itheima.wms.model.vo.base.LocationDetailVO">
+        select wl.*,
+        wg.name goodsName,
+        ws.total goodsTotal,
+        ww.name warehouseName,
+        wa.name areaName,
+        wa.code areaCode
+        from wms_location wl
+        left join wms_area wa on wl.area_id = wa.id
+        left join wms_warehouse ww on wa.warehouse_id = ww.id
+        left join wms_stock ws on ws.location_id = wl.id
+        left join wms_goods wg on ws.goods_id = wg.id
+        <where>
+            <if test="warehouseName != null">and ww.name like concat('%',#{warehouseName},'%')</if>
+            <if test="areaName != null">and wa.name like concat('%',#{areaName},'%')</if>
+            <if test="name != null">and wl.name like concat('%',#{name},'%')</if>
+            <if test="status != null">and wl.status = #{status}</if>
+            <if test="areaId != null">and wa.id = #{areaId}</if>
+        </where>
+        order by update_time desc
+    </select>
+
+    <select id="page" resultType="com.itheima.wms.model.entity.base.Location">
+        select wl.*
+        from wms_location wl
+        <where>
+            <if test="name != null">and wl.name like concat('%',#{name},'%')</if>
+            <if test="status != null">and wl.status = #{status}</if>
+            <if test="areaId != null">and wl.area_id = #{areaId}</if>
+        </where>
+        order by update_time desc
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into wms_location (warehouse_id, area_id, owner_id, code, name, temperature_type, bearing_type,
+                                  use_type, use_status, max_num, max_volume, max_weight, location_row, location_column,
+                                  location_layer, location_length, location_width, location_high, status, frozen,
+                                  remark, create_name, update_name, create_time, update_time)
+        values (#{warehouseId}, #{areaId}, #{ownerId}, #{code}, #{name}, #{temperatureType}, #{bearingType}, #{useType},
+                #{useStatus}, #{maxNum}, #{maxVolume}, #{maxWeight}, #{locationRow}, #{locationColumn},
+                #{locationLayer}, #{locationLength}, #{locationWidth}, #{locationHigh}, #{status}, #{frozen}, #{remark},
+                #{createName}, #{updateName}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="updateById">
+        update wms_location
+        <set>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="areaId != null">area_id = #{areaId},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="temperatureType != null">temperature_type = #{temperatureType},</if>
+            <if test="bearingType != null">bearing_type = #{bearingType},</if>
+            <if test="useType != null">use_type = #{useType},</if>
+            <if test="useStatus != null">use_status = #{useStatus},</if>
+            <if test="maxNum != null">max_num = #{maxNum},</if>
+            <if test="maxVolume != null">max_volume = #{maxVolume},</if>
+            <if test="maxWeight != null">max_weight = #{maxWeight},</if>
+            <if test="locationRow != null">location_row = #{locationRow},</if>
+            <if test="locationColumn != null">location_column = #{locationColumn},</if>
+            <if test="locationLayer != null">location_layer = #{locationLayer},</if>
+            <if test="locationLength != null">location_length = #{locationLength},</if>
+            <if test="locationWidth != null">location_width = #{locationWidth},</if>
+            <if test="locationHigh != null">location_high = #{locationHigh},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="frozen != null">frozen = #{frozen},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateName != null">update_name = #{updateName},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

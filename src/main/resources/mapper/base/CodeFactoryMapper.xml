@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.base.CodeFactoryMapper">
+
+    <update id="updateById">
+        update wms_code_factory
+        set content=#{content}
+        where id = #{id}
+    </update>
+
+    <insert id="save">
+        insert into wms_code_factory(type, content, status, remark, create_name, update_name, create_time,
+                                     update_time)
+        values (#{type}, #{content}, #{status}, #{remark}, #{createName}, #{updateName}, #{createTime}, #{updateTime})
+    </insert>
+</mapper>

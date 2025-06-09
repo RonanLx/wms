@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.StockMapper">
+
+    <select id="pageDetail" resultType="com.itheima.wms.model.vo.biz.StockDetailVO">
+        select ww.name warehouseName,
+        wa.name areaName,
+        wl.name locationName,
+        wl.code locationCode,
+        wg.name goodsName,
+        wg.code goodsCode,
+        wg.bar_code goodsBarCode,
+        wg.unit goodsUnit,
+        wgt.name goodsTypeName,
+        wo.name ownerName,
+        wo.code ownerCode,
+        ws.*
+        from wms_stock ws
+        left join wms_warehouse ww on ws.warehouse_id = ww.id
+        left join wms_area wa on ws.area_id = wa.id
+        left join wms_location wl on ws.location_id = wl.id
+        left join wms_owner wo on ws.owner_id = wo.id
+        left join wms_goods wg on ws.goods_id = wg.id
+        left join wms_goods_type wgt on wg.goods_type_id = wgt.id
+        <where>
+            <if test="warehouseId != null">
+                and ww.id = #{warehouseId}
+            </if>
+            <if test="areaId != null">
+                and wa.id = #{areaId}
+            </if>
+            <if test="locationId != null">
+                and wl.id = #{locationId}
+            </if>
+            <if test="ownerName != null and ownerName!=''">
+                and wo.name like concat('%',#{ownerName},'%')
+            </if>
+            <if test="owner != null and owner!=''">
+                and wo.name like concat('%',#{owner},'%')
+            </if>
+            <if test="ownerId != null">
+                and wo.id = #{ownerId}
+            </if>
+            <if test="goodsName != null and goodsName!=''">
+                and wg.name like concat('%',#{goodsName},'%')
+            </if>
+            <if test="goods != null and goods!=''">
+                and wg.name like concat('%',#{goods},'%')
+            </if>
+        </where>
+        order by wl.code
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into wms_stock (warehouse_id, area_id, location_id, owner_id, goods_id, total, free,
+                               frozen, status, remark, create_name, update_name, create_time, update_time)
+        values (#{warehouseId}, #{areaId}, #{locationId}, #{ownerId},
+                #{goodsId}, #{total}, #{free}, #{frozen}, #{status},
+                #{remark}, #{createName}, #{updateName}, #{createTime}, #{updateTime})
+    </insert>
+
+
+    <update id="updateById">
+        update wms_stock
+        <set>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="areaId != null">area_id = #{areaId},</if>
+            <if test="locationId != null">location_id = #{locationId},</if>
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="goodsId != null">goods_id = #{goodsId},</if>
+            <if test="total != null">total = #{total},</if>
+            <if test="free != null">free = #{free},</if>
+            <if test="frozen != null">frozen = #{frozen},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateName != null">update_name = #{updateName},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+</mapper>
+

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.OutboundMapper">
+
+    <select id="pageDetail" resultType="com.itheima.wms.model.vo.biz.OutboundDetailVO">
+        select wod.*,
+        wo.name ownerName,
+        wo.code ownerCode,
+        ww.name warehouseName,
+        wa.name areaName
+        from wms_outbound wod
+        left join wms_owner wo on wod.owner_id = wo.id
+        left join wms_warehouse ww on wod.warehouse_id = ww.id
+        left join wms_area wa on wod.area_id = wa.id
+        <where>
+            <if test="ownerName != null and ownerName !=''">
+                and wo.name like concat('%',#{ownerName},'%')
+            </if>
+            <if test="status != null">
+                and wod.status = #{status}
+            </if>
+            <if test="code != null and code !=''">
+                and wod.code like concat('%',#{code},'%')
+            </if>
+            <if test="billCode != null and billCode !=''">
+                and wod.bill_code like concat('%',#{billCode},'%')
+            </if>
+        </where>
+        order by wod.update_time desc
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into wms_outbound(code, bill_code, type, owner_id, warehouse_id, area_id, plan_out_time, goods_num,
+                                 wave_status, carrier_id, license, driver_name, driver_phone, receiver_name, status,
+                                 remark, create_name, update_name, create_time, update_time)
+        values (#{code}, #{billCode}, #{type}, #{ownerId}, #{warehouseId},
+                #{areaId}, #{planOutTime}, #{goodsNum}, #{waveStatus}, #{carrierId},
+                #{license}, #{driverName}, #{driverPhone}, #{receiverName}, #{status},
+                #{remark}, #{createName}, #{updateName}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="updateById">
+        update wms_outbound
+        <set>
+            <if test="code != null">code = #{code},</if>
+            <if test="billCode != null">bill_code = #{billCode},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="areaId != null">area_id = #{areaId},</if>
+            <if test="planOutTime != null">plan_out_time = #{planOutTime},</if>
+            <if test="goodsNum != null">goods_num = #{goodsNum},</if>
+            <if test="waveStatus != null">wave_status = #{waveStatuS},</if>
+            <if test="carrierId != null">carrier_id = #{carrierId},</if>
+            <if test="license != null">license = #{license},</if>
+            <if test="driverName != null">driver_name = #{driverName},</if>
+            <if test="driverPhone != null">driver_phone = #{driverPhone},</if>
+            <if test="receiverName != null">receiver_name = #{receiverName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateName != null">create_name = #{updateName},</if>
+            <if test="updateTime != null">update_name = #{updateTime},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+</mapper>

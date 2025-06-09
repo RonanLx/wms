@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.base.OwnerLocationMapper">
+
+    <select id="page" resultType="com.itheima.wms.model.entity.base.OwnerLocation">
+        select wol.*
+        from wms_owner_location wol
+        <where>
+            <if test="ownerId != null">
+                and wol.owner_id = #{ownerId}
+            </if>
+        </where>
+        order by wol.update_time desc
+    </select>
+
+    <select id="pageDetail" resultType="com.itheima.wms.model.vo.base.OwnerLocationDetailVO">
+        select wol.*,
+        ww.name warehouseName,
+        wa.name areaName,
+        wl.name locationName,
+        wl.code locationCode
+        from wms_owner_location wol
+        left join wms_warehouse ww on wol.warehouse_id = ww.id
+        left join wms_area wa on wol.area_id = wa.id
+        left join wms_location wl on wol.location_id = wl.id
+        <where>
+            <if test="ownerId != null">
+                and wol.owner_id = #{ownerId}
+            </if>
+        </where>
+        order by wol.update_time desc
+    </select>
+
+    <insert id="save">
+        insert into wms_owner_location(owner_id, warehouse_id, area_id, location_id, status, remark, create_name,
+                                       update_name, create_time, update_time)
+        values (#{ownerId}, #{warehouseId}, #{areaId}, #{locationId}, #{status}, #{remark}, #{createName},
+                #{updateName}, #{createTime}, #{updateTime})
+    </insert>
+
+</mapper>

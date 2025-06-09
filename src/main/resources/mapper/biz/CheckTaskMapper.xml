@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.CheckTaskMapper">
+    <select id="selectCheckTaskDetail" resultType="com.itheima.wms.model.vo.biz.CheckTaskDetailVO">
+        select wct.*,wc.code as checkCode,wo.name as ownerName,ww.name as warehouseName,wa.name as areaName from
+        wms_check_task wct
+        left join wms_check wc on wct.master_id = wc.id
+        left join wms_owner wo on wct.owner_id = wo.id
+        left join wms_warehouse ww on wct.warehouse_id = ww.id
+        left join wms_area wa on wct.area_id = wa.id
+        <where>
+            1 = 1
+            <if test="params.warehouseName != null">
+                and ww.name like concat('%',#{params.warehouseName},'%')
+            </if>
+            <if test="params.areaName != null">
+                and wa.name like concat('%',#{params.areaName},'%')
+            </if>
+            <if test="params.ownerName != null">
+                and wo.name like concat('%',#{params.ownerName},'%')
+            </if>
+            <if test="params.warehouseId != null">
+                and wct.warehouse_id = #{params.warehouseId}
+            </if>
+            <if test="params.areaId != null">
+                and wct.area_id = #{params.areaId}
+            </if>
+            <if test="params.ownerId != null">
+                and wct.owner_id = #{params.ownerId}
+            </if>
+            <if test="params.type != null">
+                and wct.type = #{params.type}
+            </if>
+            <if test="params.status != null">
+                and wct.status = #{params.status}
+            </if>
+            <if test="params.code != null">
+                and wct.code like concat('%',#{params.code},'%')
+            </if>
+            <if test="params.checkCode != null">
+                and wc.code like concat('%',#{params.checkCode},'%')
+            </if>
+        </where>
+        order by wct.create_time desc
+    </select>
+</mapper>

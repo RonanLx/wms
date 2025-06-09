@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.ReceiptListMapper">
+
+    <select id="pageDetail" resultType="com.itheima.wms.model.vo.biz.ReceiptListDetailVO">
+        select wrl.*,
+        wo.name ownerName,
+        wg.code goodsCode,
+        wg.name goodsName,
+        wg.price goodsPrice,
+        wg.guarantee_day goodsGuaranteeDay,
+        wg.unit goodsUnit,
+        wg.volume goodsVolume,
+        wgt.name goodsTypeName,
+        ww.name warehouseName,
+        wa.name areaName
+        from wms_receipt_list wrl
+        left join wms_owner wo on wrl.owner_id = wo.id
+        left join wms_goods wg on wrl.goods_id = wg.id
+        left join wms_goods_type wgt on wg.goods_type_id = wgt.id
+        left join wms_warehouse ww on wrl.warehouse_id = ww.id
+        left join wms_area wa on wrl.area_id = wa.id
+        <where>
+            <if test="masterId != null">and wrl.master_id = #{masterId}</if>
+        </where>
+        order by wrl.update_time desc
+    </select>
+
+    <select id="getReceiptListSumDetail" resultType="com.itheima.wms.model.vo.biz.ReceiptListSumVO">
+        select IFNULL(sum(wrl.plan_num),0) as goodsTotal,
+        IFNULL(sum(wrl.real_num),0) as goodsRealTotal,
+        IFNULL(sum(wrl.grounding_num),0) as goodsGroundingTotal,
+        ROUND(sum(exp(log(wg.volume) +log(wrl.plan_num))),2) as volumeTotal,
+        count(wrl.id) as total,
+        count(DISTINCT wrl.real_num) as realTotal,
+        count(DISTINCT wrl.grounding_num) groundingTotal
+        from wms_receipt_list wrl
+        left join wms_owner wo on wrl.owner_id = wo.id
+        left join wms_goods wg on wrl.goods_id = wg.id
+        left join wms_goods_type wgt on wg.goods_type_id = wgt.id
+        <where>
+            <if test="masterId != null">and wrl.master_id = #{masterId}</if>
+        </where>
+    </select>
+
+    <insert id="save">
+        insert into wms_receipt_list(master_id, goods_id, owner_id, warehouse_id,
+                                     area_id, location_plan_id, plan_num, real_num,
+                                     real_difference_num, grounding_num, grounding_difference_num, status, remark,
+                                     create_name, update_name, create_time, update_time)
+        values (#{masterId}, #{goodsId}, #{ownerId}, #{warehouseId},
+                #{areaId}, #{locationPlanId}, #{planNum}, #{realNum},
+                #{realDifferenceNum}, #{groundingNum}, #{groundingDifferenceNum}, #{status}, #{remark},
+                #{createName}, #{updateName}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="updateById">
+        update wms_receipt_list
+        <set>
+            <if test="masterId != null">master_id = #{masterId},</if>
+            <if test="goodsId != null">goods_id = #{goodsId},</if>
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="areaId != null">area_id = #{areaId},</if>
+            <if test="locationPlanId != null">location_plan_id = #{locationPlanId},</if>
+            <if test="planNum != null">plan_num = #{planNum},</if>
+            <if test="realNum != null">real_num = #{realNum},</if>
+            <if test="realDifferenceNum != null">real_difference_num = #{realDifferenceNum},</if>
+            <if test="groundingNum != null">grounding_num = #{groundingNum},</if>
+            <if test="groundingDifferenceNum != null">grounding_difference_num = #{groundingDifferenceNum},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateName != null">update_name = #{updateName},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+</mapper>

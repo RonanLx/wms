@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.OutboundListMapper">
+
+    <select id="pageDetail" resultType="com.itheima.wms.model.vo.biz.OutboundListDetailVO">
+        select wol.* ,
+        wo.name ownerName,
+        wg.name goodsName,
+        wg.code goodsCode,
+        wg.bar_code goodsBarCode,
+        wg.price goodsPrice,
+        wg.guarantee_day goodsGuaranteeDay,
+        wg.unit goodsUnit,
+        wg.volume goodsVolume,
+        wgt.name goodsTypeName,
+        ws.total stockTotal,
+        ws.free stockFree,
+        wl.name locationName,
+        wl.code locationCode,
+        wa.name areaName,
+        wa.code areaCode
+        from wms_outbound_list wol
+        left join wms_stock ws on wol.stock_id = ws.id
+        left join wms_location wl on ws.location_id = wl.id
+        left join wms_area wa on ws.area_id = wa.id
+        left join wms_goods wg on ws.goods_id = wg.id
+        left join wms_goods_type wgt on wg.goods_type_id = wgt.id
+        left join wms_owner wo on wg.owner_id = wo.id
+        <where>
+            <if test="masterId != null">
+                and wol.master_id = #{masterId}
+            </if>
+        </where>
+        order by wol.update_time desc
+    </select>
+
+    <select id="sumOutboundListDetail" resultType="com.itheima.wms.model.vo.biz.OutboundListSumVO">
+        select IFNULL(sum(wol.outbound_num),0) as goodsTotal,
+        IFNULL(sum(wol.picking_num),0) as pickingTotal,
+        ROUND(IFNULL(sum(exp(log(wg.volume) +log(wol.outbound_num))),0),2) as volumeTotal
+        from wms_outbound_list wol
+        left join wms_stock ws on wol.stock_id = ws.id
+        left join wms_goods wg on ws.goods_id = wg.id
+        left join wms_goods_type wgt on wg.goods_type_id = wgt.id
+        left join wms_owner wo on wg.owner_id = wo.id
+        <where>
+            <if test="masterId != null">
+                and wol.master_id = #{masterId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save">
+        insert into wms_outbound_list (master_id, stock_id, outbound_num, picking_num, difference_num, status,
+                                       remark, create_name, update_name, create_time, update_time)
+        values (#{masterId}, #{stockId}, #{outboundNum}, #{pickingNum}, #{differenceNum},
+                #{status}, #{remark}, #{createName}, #{updateName}, #{createTime}, #{updateTime});
+    </insert>
+
+    <update id="updateById">
+        update wms_outbound_list
+        <set>
+            <if test="masterId != null">master_id = #{masterId},</if>
+            <if test="stockId != null">stock_id = #{stockId},</if>
+            <if test="outboundNum != null">outbound_num = #{outboundNum},</if>
+            <if test="pickingNum != null">picking_num = #{pickingNum},</if>
+            <if test="differenceNum != null">difference_num = #{differenceNum},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateName != null">update_name = #{updateName},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+</mapper>

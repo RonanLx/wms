@@ -1,0 +1,64 @@
+package com.itheima.wms.model.vo.biz;
+
+import com.itheima.wms.model.entity.base.Owner;
+import com.itheima.wms.model.entity.biz.Handover;
+import com.itheima.wms.model.entity.biz.Outbound;
+import com.itheima.wms.model.entity.biz.Picking;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+/**
+ * <p>
+ * 展示层
+ * 出库单详情
+ * </p>
+ */
+@Data
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "OutboundDetailVO", description = "出库单详情")
+public class OutboundDetailVO extends Outbound {
+
+    @ApiModelProperty(value = "仓库名称")
+    private String warehouseName;
+    @ApiModelProperty(value = "库区名称")
+    private String areaName;
+    @ApiModelProperty(value = "承运商名称")
+    private String carrierName;
+    @ApiModelProperty(value = "货主名称")
+    private String ownerName;
+    @ApiModelProperty(value = "货主编号")
+    private String ownerCode;
+
+    @ApiModelProperty(value = "状态节点时间")
+    private List<String> timeArray;
+
+    @ApiModelProperty(value = "货主")
+    private Owner owner;
+
+    @ApiModelProperty(value = "体积总计")
+    private BigDecimal volumeTotal;
+    @ApiModelProperty(value = "货品总计")
+    private Integer goodsTotal;
+
+    @ApiModelProperty(value = "拣货任务")
+    private Picking picking;
+    @ApiModelProperty(value = "交接任务")
+    private Handover handover;
+
+    @ApiModelProperty(value = "损益合计")
+    private BigDecimal idMoney;
+
+    @ApiModelProperty(value = "损益列表")
+    private List<IncreaseDecreaseDetailVO> idList;
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.wms.mapper.biz.StockRecordMapper">
+
+    <insert id="save">
+        insert into wms_stock_record(source_id, location_id, type, original, original_free, way, alteration, result,
+                                     result_free, status, remark, create_name, update_name, create_time, update_time)
+        values (#{sourceId}, #{locationId}, #{type}, #{original}, #{originalFree},
+                #{way}, #{alteration}, #{result}, #{resultFree}, #{status},
+                #{remark}, #{createName}, #{updateName}, #{createTime}, #{updateTime})
+    </insert>
+
+    <delete id="remove">
+        delete from wms_stock_record
+        <where>
+            <if test="sourceId != null">and source_id = #{sourceId}</if>
+            <if test="locationId != null">and location_id = #{locationId}</if>
+            <if test="type != null">and type = #{type}</if>
+        </where>
+    </delete>
+
+    <select id="list" resultType="com.itheima.wms.model.entity.biz.StockRecord">
+        select *
+        from wms_stock_record
+        <where>
+            <if test="sourceId != null">and source_id = #{sourceId}</if>
+            <if test="type != null">and type = #{type}</if>
+            <if test="locationId != null">and location_id = #{locationId}</if>
+        </where>
+    </select>
+
+</mapper>

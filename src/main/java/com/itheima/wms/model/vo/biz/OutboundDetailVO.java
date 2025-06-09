@@ -1,3 +1,6 @@
+/**
+ * @author Ronan_JoJo
+ */
 package com.itheima.wms.model.vo.biz;
 
 import com.itheima.wms.model.entity.base.Owner;

@@ -1,3 +1,6 @@
+/**
+ * @author Ronan_JoJo
+ */
 package com.itheima.wms.mapper.base;
 
 import com.itheima.wms.model.entity.base.CodeFactory;

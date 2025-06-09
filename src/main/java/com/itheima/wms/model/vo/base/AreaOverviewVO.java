@@ -1,3 +1,6 @@
+/**
+ * @author Ronan_JoJo
+ */
 package com.itheima.wms.model.vo.base;
 
 import io.swagger.annotations.ApiModel;
